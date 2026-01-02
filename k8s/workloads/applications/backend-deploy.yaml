@@ -1,0 +1,67 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: backend-election
+  name: backend-election
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: backend-election
+  template:
+    metadata:
+      labels:
+        app: backend-election
+    spec:
+      containers:
+      - image: adama93/gestion_election:v1
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8089
+        name: backend-election
+        env:   
+        - name: DATASOURCE_URL   
+          valueFrom:
+            configMapKeyRef:
+              name: mysql-config
+              key: url 
+        - name: DATASOURCE_USERNAME  
+          valueFrom:
+            configMapKeyRef:
+              name: mysql-config
+              key: username
+        - name: DATASOURCE_PASSWORD 
+          valueFrom:
+            secretKeyRef: 
+              name: backend-secret
+              key: password
+        # ---------------- Probes ----------------
+        livenessProbe:
+          httpGet:
+            path: /actuator/health/liveness
+            port: 8089
+          periodSeconds: 10
+          timeoutSeconds: 2
+          failureThreshold: 3
+        readinessProbe:
+          httpGet:
+            path: /actuator/health/readiness
+            port: 8089
+          periodSeconds: 5
+          timeoutSeconds: 2
+          failureThreshold: 3
+        startupProbe:
+          httpGet:
+            path: /actuator/health/liveness
+            port: 8089
+          periodSeconds: 10
+          failureThreshold: 30
+        
+        resources:
+            requests:
+              cpu: 100m        # CPU minimale demandée
+              memory: 128Mi    # mémoire minimale demandée
+            limits:
+              cpu: 500m        # CPU maximale autorisée
+              memory: 512Mi    # mémoire maximale autorisée
