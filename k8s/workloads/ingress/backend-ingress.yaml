@@ -5,13 +5,12 @@ metadata:
   namespace: default
   annotations:
     cert-manager.io/cluster-issuer: "letsencrypt-prod"
-    acme.cert-manager.io/http01-ingress-class: traefik
 spec:
+  ingressClassName: traefik 
   tls:
   - hosts:
-    - backend.example.com
+    - api-backend.election.com
     secretName: backend-tls
-spec:
   rules:
   - host: api-backend.election.com
     http:
