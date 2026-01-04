@@ -12,3 +12,4 @@ spec:
   commonName: api-backend.election.com
   dnsNames:
   - api-backend.election.com
+  - voting.app.com
