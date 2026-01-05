@@ -1,0 +1,23 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: gestion-election-application
+  namespace: argocd
+spec:
+  project: default
+
+  source:
+    repoURL: https://github.com/SENCOINSN/gestion-election-cloud.git
+    targetRevision: HEAD
+    path: k8s/workloads
+  destination: 
+    server: https://kubernetes.default.svc
+    namespace: default
+
+  syncPolicy:
+    syncOptions:
+    - CreateNamespace=true
+
+    automated:
+      selfHeal: true
+      prune: true
